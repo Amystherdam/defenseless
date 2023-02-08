@@ -53,3 +53,5 @@ group :test do
   gem "shoulda-matchers", "~> 5.3"
   gem "database_cleaner-active_record", "~> 2.0"
 end
+
+gem "devise_token_auth", "~> 1.2"
