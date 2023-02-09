@@ -8,9 +8,9 @@
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
-# It"s strongly recommended that you check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 20_230_208_220_504) do
+ActiveRecord::Schema[7.0].define(version: 20_230_209_022_020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -51,5 +51,19 @@ ActiveRecord::Schema[7.0].define(version: 20_230_208_220_504) do
     t.index ['user_id'], name: 'index_vulnerabilities_on_user_id'
   end
 
+  create_table 'vulnerability_histories', force: :cascade do |t|
+    t.integer 'old_status'
+    t.integer 'status_quo'
+    t.datetime 'vulnerability_creation'
+    t.bigint 'vulnerability_id', null: false
+    t.bigint 'user_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['user_id'], name: 'index_vulnerability_histories_on_user_id'
+    t.index ['vulnerability_id'], name: 'index_vulnerability_histories_on_vulnerability_id'
+  end
+
   add_foreign_key 'vulnerabilities', 'users'
+  add_foreign_key 'vulnerability_histories', 'users'
+  add_foreign_key 'vulnerability_histories', 'vulnerabilities'
 end
