@@ -15,7 +15,7 @@ require "action_cable/engine"
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
+# you"ve limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
 module Defenseless
@@ -35,5 +35,11 @@ module Defenseless
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Fix ActionDispatch::Request::Session::DisabledSessionError
+    # https://github.com/waiting-for-dev/devise-jwt/issues/235#issuecomment-1116864740
+    config.session_store :cookie_store, key: "_defenseless_session"
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use config.session_store, config.session_options
   end
 end

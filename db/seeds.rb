@@ -5,3 +5,12 @@ user = User.create(
   password: '12345678',
   name: user_data[:username]
 )
+
+Vulnerability.create(
+  name: 'Vulnerabilidade',
+  description: 'Vulnerabilidade aleatória',
+  impact: Vulnerability.impacts[:low],
+  solution: 'Solução da Vulnerabilidade',
+  status: Vulnerability.statuses[:identified],
+  user:
+)
