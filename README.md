@@ -58,3 +58,11 @@ A autenticação está sendo feito com o [devise_token_auth](https://github.com/
 | uid                            |
 
 Quando o usuário faz um POST para `/auth` com os atributos de email e senha para criação da conta ou para `/auth/sign_in` visando o login, o servidor devolve essas três informações se a requisição for um sucesso. Quando uma nova requisição for feita, é necessário passar essas informaçnões no header da requisição. A resposta do servidor trará um novo access-token que deve ser enviado de volta ao servidor e assim por diante.
+
+## Utiliza Docker?
+
+Basta rodar o básico
+
+```sh
+docker-compose up
+```
