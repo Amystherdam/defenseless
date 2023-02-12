@@ -5,7 +5,18 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: defenseless
+      POSTGRES_DB: defenseless_development
+    # volumes:
+    #   - ./tmp/db:/var/lib/postgresql/data
+  db_test:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: defenseless_test
+    # volumes:
+    #   - ./tmp/db_test:/var/lib/postgresql/data
+
   web:
     build: .
     command: bash -c "bundle exec rake db:migrate db:seed && bundle exec rails server -p 3000 -b '0.0.0.0'"
@@ -15,5 +26,18 @@ services:
       - "3000:3000"
     environment:
       RAILS_ENV: development
+      DATABASE_URL: postgresql://postgres:secret@db/defenseless_development
     depends_on:
       - db
+  web_test:
+    build: .
+    command: bash -c "bundle exec rspec"
+    volumes:
+      - .:/app
+    ports:
+      - "3001:3001"
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgresql://postgres:secret@db/defenseless_test
+    depends_on:
+      - db_test

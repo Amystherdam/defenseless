@@ -1,0 +1,478 @@
+openapi: 3.0.3
+
+info:
+  title: Swagger Defenseless
+  description: API for recording, querying and deleting software vulnerabilities
+  version: 1.0.0
+
+servers:
+  - url: http://0.0.0.0:3000
+
+tags:
+  - name: Vulnerabilities
+    description: Everything about your Vulnerabilities
+  - name: VulnerabilityHistories
+    description: Everything about your Vulnerability Histories
+  - name: Auth
+    description: Everything about your Authentication
+
+components:
+  schemas:
+    Vulnerability:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: Vulnerability
+        description:
+          type: string
+          example: Any vulnerability
+        impact:
+          type: string
+          description: Vulnerability impact
+          example: low
+          enum:
+            - low
+            - medium
+            - high
+        solution:
+          type: string
+          example: Any solution for vulnerability
+        status:
+          type: string
+          description: Vulnerability Status
+          example: identified
+          enum:
+            - identified
+            - being_analyzed
+            - fixed
+        user_id:
+          type: integer
+          format: int64
+          example: 2
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    VulnerabilityPostRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Vulnerability
+        description:
+          type: string
+          example: Any vulnerability
+        impact:
+          type: integer
+          description: Vulnerability impact
+          example: 0
+        solution:
+          type: string
+          example: Any solution for vulnerability
+        status:
+          type: integer
+          description: Vulnerability Status
+          example: 0
+        user_id:
+          type: integer
+          format: int64
+          example: 2
+    VulnerabilityHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        old_status:
+          type: integer
+          format: int32
+          example: The value depends on the enumeration of the status attribute present in Vulnerabilities
+        status_quo:
+          type: integer
+          format: int32
+          example: The value depends on the enumeration of the status attribute present in Vulnerabilities
+        vulnerability_creation:
+          type: string
+          format: date-time
+        vulnerability_id:
+          type: integer
+          format: int64
+          example: 5
+        user_id:
+          type: integer
+          format: int64
+          example: 2
+    VulnerabilityHistories:
+      type: object
+      properties:
+        creator:
+          type: string
+          example: Scott
+        creation_date:
+          type: string
+          format: date-time
+        data:
+          array:
+          items:
+            $ref: "#/components/schemas/VulnerabilityHistory"
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User email
+          example: foo@bar.com
+        provider:
+          type: string
+          description: User provider
+          example: email
+        uid:
+          type: string
+          description: User uid
+          example: foo@bar.com
+        id:
+          type: integer
+          format: int64
+          example: 16
+        allow_password_change:
+          type: boolean
+          description: User allow password change
+          example: false
+        name:
+          type: string
+          description: User name
+          example: Foo
+        nickname:
+          type: string
+          description: User nickname
+          example: null
+        image:
+          type: string
+          description: User email
+          example: null
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    api_token:
+      type: "apiKey"
+      name: "access-token"
+      in: "header"
+    client:
+      type: "apiKey"
+      name: "client"
+      in: "header"
+    uid:
+      type: "apiKey"
+      name: "uid"
+      in: "header"
+
+paths:
+  # Vulnerabilities
+  /vulnerabilities:
+    get:
+      tags:
+        - Vulnerabilities
+      summary: Returns all vulnerabilities
+      description: Returns all vulnerabilities
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vulnerability"
+    post:
+      tags:
+        - Vulnerabilities
+      summary: Creates a new vulnerability
+      description: Creates a new vulnerability
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VulnerabilityPostRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vulnerability"
+  /vulnerabilities/{id}:
+    get:
+      tags:
+        - Vulnerabilities
+      summary: Returns an existing vulnerability
+      description: Returns an existing vulnerability by id
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vulnerability"
+    put:
+      tags:
+        - Vulnerabilities
+      summary: Updates an existing vulnerability
+      description: Updates an existing vulnerability by id
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VulnerabilityPostRequest"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vulnerability"
+    delete:
+      tags:
+        - Vulnerabilities
+      summary: Deletes an existing vulnerability
+      description: Deletes an existing vulnerability by id
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+
+  # Vulnerability Histories
+  /vulnerability_histories:
+    get:
+      tags:
+        - VulnerabilityHistories
+      summary: Get all vulnerability_histories
+      description: Returns a list of all vulnerability_histories
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VulnerabilityHistory"
+  /vulnerability_histories/{id}:
+    get:
+      tags:
+        - VulnerabilityHistories
+      summary: Get a specific vulnerability_history
+      description: Returns a specific vulnerability_history
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VulnerabilityHistory"
+  /vulnerability_histories/vulnerability/{id}:
+    get:
+      tags:
+        - VulnerabilityHistories
+      summary: Get vulnerability from a vulnerability_history
+      description: Returns the vulnerability from a specific vulnerability_history
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VulnerabilityHistories"
+
+  # Authentication
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Creates a new user
+      description: Creates a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: foo@bar.com
+                password:
+                  type: string
+                  format: passwrod
+                  example: 12345678
+                name:
+                  type: string
+                  example: Foo
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          description: Bad request
+
+  /auth/sign_in:
+    post:
+      tags:
+        - Auth
+      summary: Logs in the user
+      description: Logs in the user
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: foo@bar.com
+                password:
+                  type: string
+                  format: passwrod
+                  example: 12345678
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      errors:
+                      example: Invalid login credentials. Please try again.
+
+  /auth/sign_out:
+    delete:
+      tags:
+        - Auth
+      summary: Logs out the user
+      description: Logs out the user
+      security:
+        - api_token: []
+        - client: []
+        - uid: []
+      operationId: logout
+      responses:
+        200:
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      errors:
+                      example: User was not found or was not logged in.
