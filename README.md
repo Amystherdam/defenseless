@@ -51,11 +51,11 @@ Retorna {creator, creation_date, data }
 
 A autenticação está sendo feito com o [devise_token_auth](https://github.com/lynndylanhurley/devise_token_auth), toda requisição precisa de três informações para validar um usuário:
 
-| Informações para autenticaçnao |
-| ------------------------------ |
-| access-token                   |
-| client                         |
-| uid                            |
+| Informações para autenticação |
+| ----------------------------- |
+| access-token                  |
+| client                        |
+| uid                           |
 
 Quando o usuário faz um POST para `/auth` com os atributos de email e senha para criação da conta ou para `/auth/sign_in` visando o login, o servidor devolve essas três informações se a requisição for um sucesso. Quando uma nova requisição for feita, é necessário passar essas informaçnões no header da requisição. A resposta do servidor trará um novo access-token que deve ser enviado de volta ao servidor e assim por diante.
 
@@ -107,3 +107,11 @@ E em relação as rotas geradas automaticamente pelo `devise_token_auth`, coloqu
 - `/auth`
 - `/auth/sign_in`
 - `/auth/sign_out`
+
+Para fazer os testes no swagger-ui, envie um POST para `/auth`, pegue as informações para autenticação e troque o access-token a cada novo teste nos outros endpoints
+
+<img width="1465" alt="image" src="https://user-images.githubusercontent.com/43969809/218338436-f4c01536-51d9-4025-a6d5-8275b2251a9d.png">
+
+<img width="821" alt="image" src="https://user-images.githubusercontent.com/43969809/218338543-9cd683e0-dac1-4700-a470-23939e422faa.png">
+
+
