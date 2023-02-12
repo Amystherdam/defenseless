@@ -65,6 +65,17 @@ Meu ambiente estava sendo testado no Macbook Monterey 12.5, estava tendo alguns 
 
 Porém, provavelmente você não terá problemas executando esses passos:
 
+Provavelmente, você tem que definir no arquivo de hosts da sua máquina, que `db` ou `db_test` estão sendo executado na por `0.0.0.0`. Você também pode alterar isso. No arquivo `/etc/hosts` do macbook, fica algo como:
+
+```sh
+127.0.0.1 localhost
+255.255.255.255 broadcasthost
+::1 localhost
+0.0.0.0 db
+```
+
+Depois, o docker consegue entender as referências ao banco postgres dockerizado.
+
 ```sh
 docker-compose up
 ```
