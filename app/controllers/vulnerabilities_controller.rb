@@ -21,7 +21,8 @@ class VulnerabilitiesController < ApplicationController
     if @vulnerability.save
       render json: @vulnerability, status: :created, location: @vulnerability
     else
-      render json: @vulnerability.errors, status: :unprocessable_entity
+      render  json: { error: @vulnerability.errors.full_messages.join(', ') },
+              status: :unprocessable_entity
     end
   end
 
