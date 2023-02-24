@@ -61,42 +61,29 @@ Quando o usuário faz um POST para `/auth` com os atributos de email e senha par
 
 ## Utiliza Docker?
 
-Meu ambiente estava sendo testado no Macbook Monterey 12.5, estava tendo alguns problemas com IP's locais e portas, com isso, por vezes, o a conexão entre os containers do postgres e do rails era perdida.
+Existem dois arquivos de comfiguração Docker Compose, um para rodar a aplicação e outro para executar os testes Rspec, são respectivamente `docker-compose.yml` e `docker-compose-test.yml`
 
-Porém, provavelmente você não terá problemas executando esses passos:
+Agora, a sessão networks do Docker Compose está sendo usada, excluindo a necessidade de configurar algum possível aquivo de nomes de hosts locais como `etc/hosts`.
 
-Provavelmente, você tem que definir no arquivo de hosts da sua máquina, que `db` ou `db_test` estão sendo executado na por `0.0.0.0`. Você também pode alterar isso. No arquivo `/etc/hosts` do macbook, fica algo como:
+Para executar os testes Rspec, execute no terminal:
 
 ```sh
-127.0.0.1 localhost
-255.255.255.255 broadcasthost
-::1 localhost
-0.0.0.0 db
+docker-compose -f docker-compose-test.yml up
 ```
 
-Depois, o docker consegue entender as referências ao banco postgres dockerizado.
+Para executar a aplicação, execute no terminal:
 
 ```sh
 docker-compose up
 ```
 
-Se o compose padrão rodar sem problemas a bateria de testes e subir a aplicação, está tudo ok! Caso ele não rode os testes informando que `defenseless_test` não existe, o container do postgres provavelmente está com problemas e isso é uma incognita.
-
-Entretanto, ao executar `docker-compose run web rake db:create` no seu terminal, ele vai bater na trave, provavelmente, a mensagem que vai aparecer é que o `defenseless_development` já existe. O que queriamos na verdade era desbloquear alguma ponte de conexão que estava atrapalhando nossa conversa entre os containers e esse comando por algum motivo resolve.
+Para persistir no banco as migrações pendentes e executar o `seed.rb` você pode executar no terminal:
 
 ```sh
-docker-compose run web_test rake db:create
+docker exec -it defenseless-web-1 bash
 ```
 
-Isso deve criar o defenseless_test
-
-```sh
-docker-compose run web_test
-```
-
-Isso deve rodar os testes agora! Eu prefiro usar o terminal na maior parte do tempo, mas, por vezes, tive que usar o app docker desktop para ligar containers manualmente.
-
-O ideal era separar em dois composers.yml diferentes, mas, esse é o MVP da dockerização dessa API, busquei ser lean no momento!
+Quando o terminal do container abrir, execute os comando pertinentes do rails. Se preferir, você também pode abrir a aba terminal do app Docker Desktop se estiver instalado em sua máquina. Lembre-se de verificar se a imagem Docker Compose tem realmente o nome `defenseless-web-1`
 
 ## Swagger
 
@@ -113,5 +100,3 @@ Para fazer os testes no swagger-ui, envie um POST para `/auth`, pegue as informa
 <img width="1465" alt="image" src="https://user-images.githubusercontent.com/43969809/218338436-f4c01536-51d9-4025-a6d5-8275b2251a9d.png">
 
 <img width="821" alt="image" src="https://user-images.githubusercontent.com/43969809/218338543-9cd683e0-dac1-4700-a470-23939e422faa.png">
-
-

@@ -1,4 +1,9 @@
 version: "3"
+
+networks:
+  app-network:
+    driver: bridge
+
 services:
   db:
     image: postgres
@@ -6,20 +11,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: defenseless_development
-    # volumes:
-    #   - ./tmp/db:/var/lib/postgresql/data
-  db_test:
-    image: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: defenseless_test
-    # volumes:
-    #   - ./tmp/db_test:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   web:
     build: .
-    command: bash -c "bundle exec rake db:migrate db:seed && bundle exec rails server -p 3000 -b '0.0.0.0'"
+    command: bash -c "bundle exec rails server -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/app
     ports:
@@ -29,15 +26,5 @@ services:
       DATABASE_URL: postgresql://postgres:secret@db/defenseless_development
     depends_on:
       - db
-  web_test:
-    build: .
-    command: bash -c "bundle exec rspec"
-    volumes:
-      - .:/app
-    ports:
-      - "3001:3001"
-    environment:
-      RAILS_ENV: test
-      DATABASE_URL: postgresql://postgres:secret@db/defenseless_test
-    depends_on:
-      - db_test
+    networks:
+      - app-network

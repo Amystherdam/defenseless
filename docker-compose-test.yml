@@ -1,0 +1,28 @@
+version: "3"
+
+networks:
+  app-test-network:
+    driver: bridge
+
+services:
+  db-test:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: defenseless_test
+    networks:
+      - app-test-network
+
+  web-test:
+    build: .
+    command: bash -c "bundle exec rspec"
+    volumes:
+      - .:/app
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgresql://postgres:secret@db-test/defenseless_test
+    depends_on:
+      - db-test
+    networks:
+      - app-test-network
