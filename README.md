@@ -85,6 +85,16 @@ docker exec -it defenseless-web-1 bash
 
 Quando o terminal do container abrir, execute os comando pertinentes do rails. Se preferir, você também pode abrir a aba terminal do app Docker Desktop se estiver instalado em sua máquina. Lembre-se de verificar se a imagem Docker Compose tem realmente o nome `defenseless-web-1`
 
+Para debugar em linha, com o `byebug` por exemplo, terá que subir os containers em segundo plano e se conectar ao terminal com `attach`:
+
+```sh
+docker-compose up -d
+docker ps
+docker attach :container_id
+```
+
+Pegue o ID do container web com o `docker ps` e informe ao `attach`. Utilize `docker-compose stop` para interromper os containers em execução.
+
 ## Swagger
 
 Você pode acessar a documentação dessa API no endpoint `/api-docs/index.html` usei gems de integração com a interface do Swagger.ui
