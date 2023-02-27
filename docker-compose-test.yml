@@ -16,6 +16,8 @@ services:
 
   web-test:
     build: .
+    stdin_open: true
+    tty: true
     command: bash -c "bundle exec rspec"
     volumes:
       - .:/app
