@@ -1,6 +1,7 @@
 class VulnerabilitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_vulnerability, only: %i[show update destroy]
+  before_action :inject_dependencies, only: %i[create update]
 
   # GET /vulnerabilities
   def index
@@ -19,6 +20,8 @@ class VulnerabilitiesController < ApplicationController
     @vulnerability = Vulnerability.new(vulnerability_params)
 
     if @vulnerability.save
+      @vulnerability_history_creator.create('create', @vulnerability)
+
       render json: @vulnerability, status: :created, location: @vulnerability
     else
       render  json: { error: @vulnerability.errors.full_messages.join(', ') },
@@ -29,6 +32,8 @@ class VulnerabilitiesController < ApplicationController
   # PATCH/PUT /vulnerabilities/1
   def update
     if @vulnerability.update(vulnerability_params)
+      @vulnerability_history_creator.create('update', @vulnerability)
+
       render json: @vulnerability
     else
       render json: @vulnerability.errors, status: :unprocessable_entity
@@ -41,6 +46,10 @@ class VulnerabilitiesController < ApplicationController
   end
 
   private
+
+  def inject_dependencies
+    @vulnerability_history_creator = VulnerabilityHistoryCreator.new
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_vulnerability
